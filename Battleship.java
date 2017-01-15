@@ -20,11 +20,7 @@ public class Battleship {
 		printGrid = new char[8][8];
 		
 	}
-	public Battleship(int size) // constructor to create a custom grid 
-	{
-		grid = new Position[size][size];
-		printGrid = new char[size][size];
-	}
+
 	/////////////////////////////////////////////////////////////////
 	
 	// My isAvailable methods
@@ -343,38 +339,49 @@ public class Battleship {
 		}
 		else // human player place his rocket
 		{
+			boolean within = false;
 			System.out.println("Where do you want to position your rocket?:");
 			String coordinate = sc.next();
-			if (isWithin(coordinate)==true)
+			
+			while (within!=true)
 			{
-				Position temp = new Position(p1.getName(), coordinate); // temporary created object just to get row and column for the coordinate entered
-				if (grid[temp.getRow()][temp.getColumn()].getOwner().equals(p2.getName())) // the position belongs to the computer
+				
+				if (isWithin(coordinate)==false)
 				{
-					if (grid[temp.getRow()][temp.getColumn()].getShip()==true)
+					System.out.println("Sorry, that is not a valid position. Please try again.");
+					continue;
+				} else {
+					within = true;
+
+					Position temp = new Position(p1.getName(), coordinate); // temporary created object just to get row and column for the coordinate entered
+					if (grid[temp.getRow()][temp.getColumn()].getOwner().equals(p2.getName())) // the position belongs to the computer
 					{
-						System.out.println("Ship hit!");
-						p2.removeShips();
+						if (grid[temp.getRow()][temp.getColumn()].getShip()==true)
+						{
+							System.out.println("Ship hit!");
+							p2.removeShips();
+							grid[temp.getRow()][temp.getColumn()].setCalled();
+						}
+						else if (grid[temp.getRow()][temp.getColumn()].getGrenade()==true)
+						{
+							System.out.println("You hit a grenade.");
+							p2.removeGrenade();
+							p.addMissedTurn();
+							grid[temp.getRow()][temp.getColumn()].setCalled();
+
+						}
+
+					}
+					else if (grid[temp.getRow()][temp.getColumn()].getOwner().equals(p.getName())) // the position belongs to the argument player
+					{
+						System.out.println("This is your position!");
+						placeRocket(p1, scan);
+					}
+					else // belongs to nobody, must initialize all the position that are not used
+					{
+						System.out.println("Nothing was hit");
 						grid[temp.getRow()][temp.getColumn()].setCalled();
 					}
-					else if (grid[temp.getRow()][temp.getColumn()].getGrenade()==true)
-					{
-						System.out.println("You hit a grenade.");
-						p2.removeGrenade();
-						p.addMissedTurn();
-						grid[temp.getRow()][temp.getColumn()].setCalled();
-						
-					}
-					
-				}
-				else if (grid[temp.getRow()][temp.getColumn()].getOwner().equals(p.getName())) // the position belongs to the argument player
-				{
-					System.out.println("This is your position!");
-					placeRocket(p1, scan);
-				}
-				else // belongs to nobody, must initialize all the position that are not used
-				{
-					System.out.println("Nothing was hit");
-					grid[temp.getRow()][temp.getColumn()].setCalled();
 				}
 			}
 		}
