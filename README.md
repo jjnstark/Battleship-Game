@@ -1,2 +1,2 @@
 # Battleship-Game
-class assignment
+Class assignment to create a Battleship Game.
